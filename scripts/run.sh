@@ -75,7 +75,9 @@ PIPELINE_PROVIDER="litellm"
 # 2026-09-06: switched to qwen-nvidia at Alfonso's request (Spark LiteLLM).
 # 2026-09-06: switched to qwen-mia at Alfonso's request (Spark LiteLLM, reasoning model).
 # 2026-09-09: switched to deepseek-v4-flash-0731 at Alfonso's request (Spark LiteLLM).
-PIPELINE_MODEL="deepseek-v4-flash-0731"
+# 2026-09-13: switched to qwen3.8-flash-next at Alfonso's request (deepseek no longer
+#             served on :8888; qwen is the only model the proxy carries).
+PIPELINE_MODEL="qwen3.8-flash-next"
 
 # ── Setup ────────────────────────────────────────────────────
 mkdir -p "$LOG_DIR" "$SCOUTS_DIR" "$OUTPUT_DIR"

@@ -38,7 +38,7 @@ ln -s ~/local-ai-news-pipeline/skills ~/.hermes/profiles/paper/skills/lain
 ### 3. The Hermes profile
 
 The pipeline invokes `hermes chat --profile paper -s <skill> -t <toolsets>
--m deepseek-v4-flash-0731 --provider litellm`. Create the profile and give it the `litellm`
+-m qwen3.8-flash-next --provider litellm`. Create the profile and give it the `litellm`
 custom provider (in `~/.hermes/profiles/paper/config.yaml`):
 
 ```yaml

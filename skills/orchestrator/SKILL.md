@@ -24,7 +24,7 @@ Sync deploy dir → resolve issue # → archive predecessor edition
   ↓
 10 scouts, ONE AT A TIME (see "Why sequential" below)
   ↓
-Editor (deepseek-v4-flash-0731 via litellm) → edition.json
+Editor (qwen3.8-flash-next via litellm) → edition.json
   ↓
 Render → index.html → wire articles → ticker injection → making-of
   ↓

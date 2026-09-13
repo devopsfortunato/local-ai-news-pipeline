@@ -68,23 +68,23 @@ explicitly.
 
 | Step | Kind | Model / Provider | Toolset | Reads | Writes |
 |------|------|-------------------|---------|-------|--------|
-| scout-research | agent | deepseek-v4-flash-0731 / litellm | web, file, terminal | — | `scout_research.json` |
-| scout-official | agent | deepseek-v4-flash-0731 / litellm | web, file, terminal | `skills/_shared/sources.md` | `scout_official.json` |
-| scout-opensource | agent | deepseek-v4-flash-0731 / litellm | web, file, terminal | — | `scout_opensource.json` (editorial + trending) |
+| scout-research | agent | qwen3.8-flash-next / litellm | web, file, terminal | — | `scout_research.json` |
+| scout-official | agent | qwen3.8-flash-next / litellm | web, file, terminal | `skills/_shared/sources.md` | `scout_official.json` |
+| scout-opensource | agent | qwen3.8-flash-next / litellm | web, file, terminal | — | `scout_opensource.json` (editorial + trending) |
 | `fetch_trending.py` | code | — | curl | — | merged into `scout_opensource.json` if trending < 3 |
 | `fetch_free_models.py` | code | — | curl | OpenRouter + OpenCode Zen catalogs | `free_models.json` (step 3b) |
-| scout-tools | agent | deepseek-v4-flash-0731 / litellm | web, file, terminal | — | `scout_tools.json` |
-| scout-hardware | agent | deepseek-v4-flash-0731 / litellm | web, file, terminal | — | `scout_hardware.json` |
-| scout-selfhost | agent | deepseek-v4-flash-0731 / litellm | web, file, terminal | — | `scout_selfhost.json` |
-| scout-x | agent | deepseek-v4-flash-0731 / litellm | x_search, file, terminal | — | `scout_x.json` (falls back to DuckDuckGo/Bing if no X creds) |
-| scout-funding | agent | deepseek-v4-flash-0731 / litellm | web, file, terminal | — | `scout_funding.json` |
-| scout-youtube | agent | deepseek-v4-flash-0731 / litellm | file | `scout_youtube_raw.json` (from `youtube_scout.py` fetch) | `scout_youtube.json` |
-| scout-italia | agent | deepseek-v4-flash-0731 / litellm | web, file, terminal | `skills/_shared/sources.md` (Italia feeds) | `scout_italia.json` |
+| scout-tools | agent | qwen3.8-flash-next / litellm | web, file, terminal | — | `scout_tools.json` |
+| scout-hardware | agent | qwen3.8-flash-next / litellm | web, file, terminal | — | `scout_hardware.json` |
+| scout-selfhost | agent | qwen3.8-flash-next / litellm | web, file, terminal | — | `scout_selfhost.json` |
+| scout-x | agent | qwen3.8-flash-next / litellm | x_search, file, terminal | — | `scout_x.json` (falls back to DuckDuckGo/Bing if no X creds) |
+| scout-funding | agent | qwen3.8-flash-next / litellm | web, file, terminal | — | `scout_funding.json` |
+| scout-youtube | agent | qwen3.8-flash-next / litellm | file | `scout_youtube_raw.json` (from `youtube_scout.py` fetch) | `scout_youtube.json` |
+| scout-italia | agent | qwen3.8-flash-next / litellm | web, file, terminal | `skills/_shared/sources.md` (Italia feeds) | `scout_italia.json` |
 | `youtube_scout.py` | code | — | yt-dlp + YouTube RSS | `skills/_shared/sources.md` (channels) | `scout_youtube_raw.json` |
-| image-gen (step 4b) | agent | deepseek-v4-flash-0731 / litellm | file, image_gen, terminal | `edition.json` | `images/*.jpg` + updates `edition.json` — **non-fatal, skips on provider limit** |
-| editor | agent | deepseek-v4-flash-0731 / litellm | file | all `scout_*.json` + `headlines_history.json` + `free_models.json` | `edition.json` — **the only FATAL step** |
+| image-gen (step 4b) | agent | qwen3.8-flash-next / litellm | file, image_gen, terminal | `edition.json` | `images/*.jpg` + updates `edition.json` — **non-fatal, skips on provider limit** |
+| editor | agent | qwen3.8-flash-next / litellm | file | all `scout_*.json` + `headlines_history.json` + `free_models.json` | `edition.json` — **the only FATAL step** |
 | `render.py` | code | — | — | `edition.json` + `template/` | `index.html` |
-| `wire_articles.py` | code + 1 agent call/article | deepseek-v4-flash-0731 / litellm | curl (RSS from `sources.md`) + hermes chat subprocess | RSS feeds | `scout_wire.json` |
+| `wire_articles.py` | code + 1 agent call/article | qwen3.8-flash-next / litellm | curl (RSS from `sources.md`) + hermes chat subprocess | RSS feeds | `scout_wire.json` |
 | `inject_wire_ticker.py` | code | — | — | `index.html`, `scout_wire.json` | `index.html` (ticker injected) |
 | `make_making_of.py` | code, read-only | — | — | scout JSON, run log, log mtimes, `edition.json` | `making-of.html` |
 | `archive_issue.py` | code | — | — | `deploy/index.html` + assets it references | `archive/YYYY-MM-DD/` snapshot |

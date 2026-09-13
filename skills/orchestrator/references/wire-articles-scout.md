@@ -129,7 +129,7 @@ The ticker is then injected into the rendered page by `inject_wire_ticker.py` (s
 
 | File | Purpose |
 |------|---------|
-| `scripts/content/wire_articles.py` | RSS fetch + LLM write. Model: `deepseek-v4-flash-0731` via `litellm` (passed in from `run.sh`) |
+| `scripts/content/wire_articles.py` | RSS fetch + LLM write. Model: `qwen3.8-flash-next` via `litellm` (passed in from `run.sh`) |
 | `scripts/inject/inject_wire_ticker.py` | Post-render injection of the ticker + modal into `index.html` |
 
 ## Pitfalls
