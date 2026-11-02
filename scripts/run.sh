@@ -32,7 +32,7 @@ HERMES_BIN="${PAPER_HERMES_BIN:-$HOME/.local/bin/hermes}"
 RENDER_PY="$SCRIPT_DIR/core/render.py"
 CLEANUP_SH="$WORK_DIR/cleanup.sh"
 DEPLOY_DIR="${PAPER_DEPLOY_DIR:-$HOME/local-ai-news-deploy}"
-SITE_URL="${PAPER_SITE_URL:-https://moviemaker93.github.io/local-ai-news/}"
+SITE_URL="${PAPER_SITE_URL:-https://devopsfortunato.github.io/local-ai-news/}"
 # Scouts run ONE AT A TIME against a single self-hosted inference server
 # (the DGX Spark's LiteLLM proxy), so these budgets are per-scout wall clock
 # with the whole server to itself, and the master budget has to cover their
@@ -516,6 +516,31 @@ Save images to $IMAGES_DIR/. Update edition.json with image paths like 'images/<
         >>"$LOG_DIR/imagegen_${TODAY}.log" 2>&1 || true
 fi
 
+# Post-check: qwen-mia sometimes generates the images but ends its turn
+# WITHOUT writing the paths into edition.json (silent premature stop, same
+# signature as the editor 09-08/09-30 failures). Detect orphaned images and
+# nudge the image-gen agent once to finish the wiring.
+IMG_ORPHANS=$(python3 - <<'PY'
+import json,os
+ed=json.load(open('/tmp/lain/edition.json'))
+refs=set()
+def add(v):
+    if isinstance(v,str) and v: refs.add(os.path.basename(v))
+add(ed.get('lead',{}).get('image'))
+for s in ed.get('sections',[]): add(s.get('image'))
+orph=[f for f in os.listdir('/tmp/lain/images') if f.endswith(('.jpg','.png','.webp')) and f not in refs]
+print(len(orph))
+PY
+)
+IMG_ORPHANS=$(echo "$IMG_ORPHANS" | tr -cd '0-9' | tail -c 3)
+[ -z "$IMG_ORPHANS" ] && IMG_ORPHANS=0
+if [ "${SKIP_IMAGES}" = false ] && [ "$IMG_ORPHANS" -gt 0 ]; then
+    echo "  ⚠ $IMG_ORPHANS generated image(s) not referenced in edition.json — nudging agent to wire them"
+    timeout 300 "$HERMES_BIN" chat -q "You are the Image Generator for Local AI News. Do NOT generate any new images. In $IMAGES_DIR there are image files not referenced by $WORK_DIR/edition.json. Set the matching lead/section 'image' fields to 'images/<filename>' based on the filenames (lead_*, section_<slug>_*). Save edition.json. ENGLISH ONLY." \
+        --profile "$PROFILE" -s image-gen -t file,image_gen,terminal -m "$PIPELINE_MODEL" --provider "$PIPELINE_PROVIDER" -Q --yolo \
+        >>"$LOG_DIR/imagegen_${TODAY}.log" 2>&1 || echo "  ⚠ wiring nudge failed (non-fatal)"
+fi
+
 # Post-check: if it failed due to limits, remember and skip tomorrow
 if last_attempt "$LOG_DIR/imagegen_${TODAY}.log" | grep -q "usage limit has been reached\|429\|credits exhausted\|spending-limit\|402"; then
     echo "  ⚠ image provider usage limit reached — will skip image gen next runs too"
@@ -698,7 +723,7 @@ echo "  Scouts:  $SCOUT_COUNT/6"
 echo "  Edition: ✅ ($([ -f "$WORK_DIR/edition.json" ] && echo 'generated' || echo 'failed'))"
 echo "  Wire:    ${WIRE_COUNT:-0} articles"
 echo "  Deploy:  $DEPLOY_DIR"
-echo "  Pushed:  github.com/MovieMaker93/local-ai-news"
+echo "  Pushed:  github.com/devopsfortunato/local-ai-news"
 echo "═══════════════════════════════════════════════"
 
 # Final milestone. Reports what degraded rather than claiming a clean run,
