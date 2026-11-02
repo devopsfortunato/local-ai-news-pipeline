@@ -710,8 +710,11 @@ git add -A
 if ! git diff --cached --quiet; then
     git commit -m "Update local AI news $TODAY" --quiet 2>/dev/null || true
 fi
-git push origin main --quiet 2>/dev/null || echo "  ⚠ git push failed — will retry on next run"
-echo "  ✓ pushed to GitHub"
+if ! git push origin main --quiet 2>/dev/null; then
+    echo "  ⚠ git push failed — will retry on next run"
+else
+    echo "  ✓ pushed to GitHub"
+fi
 
 # ── Report ──────────────────────────────────────────────────
 echo ""
