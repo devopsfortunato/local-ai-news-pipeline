@@ -28,6 +28,19 @@ LOG_DIR="$WORK_DIR/logs"
 SCOUTS_DIR="$WORK_DIR/scouts"
 OUTPUT_DIR="$WORK_DIR/output"
 IMAGES_DIR="$WORK_DIR/images"
+
+# ── Concurrency lock ─────────────────────────────────────
+# One run at a time: concurrent runs share this workdir and stomp each
+# other's state (observed 2026-11-02: three overlapping runs; the newest
+# run's step-0 cleanup deleted the older runs' scout files mid-flight).
+LOCK_FILE="$WORK_DIR/pipeline.lock"
+mkdir -p "$WORK_DIR" 2>/dev/null || true
+if [ -f "$LOCK_FILE" ] && kill -0 "$(cat "$LOCK_FILE" 2>/dev/null)" 2>/dev/null; then
+    echo "✗ another pipeline run is active (pid $(cat "$LOCK_FILE")) — aborting to avoid a /tmp/lain race"
+    exit 1
+fi
+echo $$ > "$LOCK_FILE"
+trap 'rm -f "$LOCK_FILE"' EXIT
 HERMES_BIN="${PAPER_HERMES_BIN:-$HOME/.local/bin/hermes}"
 RENDER_PY="$SCRIPT_DIR/core/render.py"
 CLEANUP_SH="$WORK_DIR/cleanup.sh"
